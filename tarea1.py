@@ -194,7 +194,6 @@ def play_game(game):
             for color in remaining:
                 removed = played_blocks.get(color, 0)
                 remaining[color] = max(0, remaining[color] - removed)
-            print(remaining)
         status = get_status(game['id'])
 
     print(f"Game {game['id']} --> {status['status']}.")
