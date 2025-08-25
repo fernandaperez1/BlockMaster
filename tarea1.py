@@ -208,7 +208,7 @@ def simulate_score_score_target(board, group):
             if board[i][sel_c] != 'X':
                 count += 1
         count -= 1  
-        return count ** 2
+        return count ** 2 
 
     elif sel_block[0] == '3': 
         color_to_remove = sel_block[-1]
@@ -278,13 +278,12 @@ def find_best_move_color_target(board, color_probs, special_spawn_rate, remainin
     best_move = None
     best_score = -1
     rows, cols = len(board), len(board[0])
-
     all_groups = get_all_groups(board, min_size=1)
 
     for r in range(rows):
         for c in range(cols):
             block = board[r][c]
-            if block[0] in '1234':  # es una bomba o conversor
+            if block[0] in '1234':  
                 in_group = False
                 for group in all_groups:
                     if (r, c) in group:
@@ -296,15 +295,11 @@ def find_best_move_color_target(board, color_probs, special_spawn_rate, remainin
     for group in all_groups:
         sel_r, sel_c = group[0]
         sel_block = board[sel_r][sel_c]
-
         score = simulate_score_color_target(board, group, remaining)
-
         if sel_block[0] == '3' and sel_block[-1] in remaining and remaining[sel_block[-1]] > 0:
             score *= 1.5  
-
         if sel_block[0] == '4' and sel_block[2] in remaining and remaining[sel_block[2]] > 0:
             score *= 1.3
-
         simulated_board = simulate_move(board, group, color_probs, special_spawn_rate)
 
         future_groups = get_all_groups(simulated_board, min_size=1)
@@ -318,7 +313,6 @@ def find_best_move_color_target(board, color_probs, special_spawn_rate, remainin
 
         if len(group) == 1 and sel_block[0] == '0':
             total_score *= 0.8
-
         if total_score > best_score:
             best_score = total_score
             best_move = group
@@ -328,7 +322,6 @@ def find_best_move_color_target(board, color_probs, special_spawn_rate, remainin
 def find_best_move_score_target(board, color_probs, special_spawn_rate):
     best_move = None
     best_score = -1
-
     all_groups = get_all_groups(board, min_size=3)
     if len(all_groups) == 0:
         all_groups = get_all_groups(board, min_size=1)
@@ -345,11 +338,9 @@ def find_best_move_score_target(board, color_probs, special_spawn_rate):
     for group in possible_moves:
         current_score = simulate_score_score_target(board, group)
         simulated_future_board = simulate_move(board, group, color_probs, special_spawn_rate)
-
         future_groups = get_all_groups(simulated_future_board, min_size=3)
         if len(future_groups) == 0:
             future_groups = get_all_groups(simulated_future_board, min_size=1)
-
         if len(future_groups) > 0:
             best_future = -1
             for future_group in future_groups:
@@ -376,7 +367,6 @@ def color_dfs(board, visited, r, c, color):
         if visited[x][y]:
             continue
         visited[x][y] = True
-
         if board[x][y] != '.' and board[x][y] != 'X' and board[x][y][0] == '0' and board[x][y][-1] == color:
             group.append((x, y))
 
@@ -384,7 +374,6 @@ def color_dfs(board, visited, r, c, color):
                 nx, ny = x + dx, y + dy
                 if 0 <= nx < rows and 0 <= ny < cols and not visited[nx][ny]:
                     stack.append((nx, ny))
-
     return group
 
 def find_largest_group(board, color):
@@ -577,8 +566,6 @@ def find_best_move_group_target(board, color_probs, special_spawn_rate, min_grou
             best_delta = delta
             best_size = size_after
             best_move = (r, c)
-    
-    print(f"[DEBUG] Color objetivo {target_color}, mejor grupo tras simulación: {best_size}, celda {best_move}")
 
     if best_move is None:
         for i in range(rows):
@@ -619,7 +606,6 @@ def play_game(game):
             for color in remaining:
                 removed = played_blocks.get(color, 0)
                 remaining[color] = max(0, remaining[color] - removed)
-                print(remaining)
         status = get_status(game['id'])
 
     print(f"Game {game['id']} --> {status['status']}.")
